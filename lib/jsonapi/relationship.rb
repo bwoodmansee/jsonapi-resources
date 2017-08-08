@@ -2,7 +2,7 @@ module JSONAPI
   class Relationship
     attr_reader :acts_as_set, :foreign_key, :options, :name,
                 :class_name, :polymorphic, :always_include_linkage_data,
-                :parent_resource, :eager_load_on_include
+                :parent_resource, :eager_load_on_include, :allow_include
 
     def initialize(name, options = {})
       @name = name.to_s
@@ -14,6 +14,7 @@ module JSONAPI
       @polymorphic = options.fetch(:polymorphic, false) == true
       @always_include_linkage_data = options.fetch(:always_include_linkage_data, false) == true
       @eager_load_on_include = options.fetch(:eager_load_on_include, true) == true
+      @allow_include = options[:allow_include]
     end
 
     alias_method :polymorphic?, :polymorphic
@@ -85,6 +86,14 @@ module JSONAPI
       def polymorphic_type
         "#{name}_type" if polymorphic?
       end
+
+      def allow_include?
+        if @allow_include.nil?
+          JSONAPI.configuration.default_allow_include_to_one
+        else
+          @allow_include
+        end
+      end
     end
 
     class ToMany < Relationship
@@ -96,6 +105,14 @@ module JSONAPI
         @foreign_key ||= "#{name.to_s.singularize}_ids".to_sym
         @reflect = options.fetch(:reflect, true) == true
         @inverse_relationship = options.fetch(:inverse_relationship, parent_resource._type.to_s.singularize.to_sym) if parent_resource
+      end
+
+      def allow_include?
+        if @allow_include.nil?
+          JSONAPI.configuration.default_allow_include_to_one
+        else
+          @allow_include
+        end
       end
     end
   end
