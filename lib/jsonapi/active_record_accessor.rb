@@ -343,7 +343,7 @@ module JSONAPI
     def cached_resources_for(records, serializer, options)
       if _resource_klass.caching?
         t = _resource_klass._model_class.arel_table
-        Rails.logger.error("Class: #{_model_class} T: #{t}")
+        Rails.logger.error("Class: #{_resource_klass._model_class} T: #{t}")
         cache_ids = pluck_arel_attributes(records, t[_resource_klass._primary_key], t[_resource_klass._cache_field])
         Rails.logger.error("cache_ids: #{cache_ids}")
         resources = CachedResourceFragment.fetch_fragments(_resource_klass, serializer, options[:context], cache_ids)
