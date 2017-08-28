@@ -386,6 +386,7 @@ module JSONAPI
     end
 
     def preload_included_fragments(src_res_class, resource_pile, path, serializer, options)
+      Rails.logger.error("preload_included_fragments with src_res_class: #{src_res_class}")
       src_resources = resource_pile[src_res_class.name]
       return if src_resources.nil? || src_resources.empty?
 
@@ -399,6 +400,7 @@ module JSONAPI
       end
 
       tgt_res_class = relationship.resource_klass
+      Rails.logger.error("preload_included_fragments got tgt_res_class: #{tgt_res_class}")
       unless resource_class_based_on_active_record?(tgt_res_class)
         # Can't preload relationships from non-AR resources, this association will be filled
         # in on-demand later by ResourceSerializer.
@@ -460,7 +462,8 @@ module JSONAPI
       ]
       pluck_attrs << tgt_table[tgt_res_class._cache_field] if tgt_res_class.caching?
 
-      Rails.logger.error("pluck_attrs: #{pluck_attrs}")
+      Rails.logger.error("tgt_table: #{tgt_table}")
+      Rails.logger.error("tgt_res_class: #{tgt_res_class}")
       id_rows = pluck_arel_attributes(record_source, *pluck_attrs)
 
       target_resources = resource_pile[tgt_res_class.name] ||= {}
