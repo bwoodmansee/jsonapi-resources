@@ -460,6 +460,7 @@ module JSONAPI
       ]
       pluck_attrs << tgt_table[tgt_res_class._cache_field] if tgt_res_class.caching?
 
+      Rails.logger.error("pluck_attrs: #{pluck_attrs}")
       id_rows = pluck_arel_attributes(record_source, *pluck_attrs)
 
       target_resources = resource_pile[tgt_res_class.name] ||= {}
